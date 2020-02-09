@@ -303,3 +303,147 @@ int main() {
 - 즉 시작점을 1로 고정하고 뒷 부분만 돌려버리면 된다.
   (1) while문에 next_permutation(a.begin() + 1, a.end())를 하는 방법
   (2) 루프 시작점에서 if(a[0] != 0) break;를 달아주면 된다.
+
+	
+6603번 : 로또
+- 컴비네이션을 어떻게 구현해야 할까..
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int main() {
+	int n;
+	while (scanf("%d", &n)) {
+		if (n == 0) {
+			return 0;
+		}
+		vector<int> a(n);
+		for (int i = 0; i < n; i++) {
+			scanf("%d", &a[i]);
+		}
+		vector<int> d(n);
+		for (int i = 0; i < n; i++) {
+			if (i < 6) {
+				d[i] = 0;
+			}
+			else {
+				d[i] = 1;
+			}
+		}
+		do {
+			for (int i = 0; i < n; i++) {
+				if (d[i] == 0) {
+					printf("%d ", a[i]);
+				}
+			}
+			printf("\n");
+		} while (next_permutation(d.begin(), d.end()));
+		printf("\n");
+	}
+	return 0;
+}
+
+14888번 : 연산자 끼워넣기
+- push_back() 사용시 미리 벡터 초기화 X
+
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int main() {
+	int n;
+	scanf("%d", &n);
+	vector<int> a(n);
+	for (int i = 0; i < n; i++) {
+		scanf("%d", &a[i]);
+	}
+	vector<int> b; // 왜 b(n-1)을 하고 푸쉬백을 하면 안되는 걸까?
+	// 미리 0이 다 채워진 상태에서 그 뒤에 다음 원소들이 삽입...
+	vector<int> count(4);
+	for (int i = 0; i < 4; i++) {
+		scanf("%d", &count[i]);
+	}
+	for (int i = 0; i < 4; i++) {
+		while (count[i] > 0) {
+			b.push_back(i);
+			count[i] -= 1;
+		}
+	}
+	long long min = 10000000000;
+	long long max = -10000000000;
+	do {
+		long long temp = a[0];
+		for (int i = 0; i < n - 1; i++) {
+			if (b[i] == 0) {
+				temp += a[i + 1];
+			}
+			else if (b[i] == 1) {
+				temp -= a[i + 1];
+			}
+			else if (b[i] == 2) {
+				temp *= a[i + 1];
+			}
+			else if (b[i] == 3) {
+				temp /= a[i + 1];
+			}
+		}
+		if (max < temp) {
+			max = temp;
+		}
+		if (min > temp) {
+			min = temp;
+		}
+	} while (next_permutation(b.begin(), b.end()));
+	printf("%lld\n%lld\n", max, min);
+	return 0;
+}
+
+- minmx_element의 사용
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int calc(vector<int> &a, vector<int> &b) {
+    int n = a.size();
+    int ans = a[0];
+    for (int i=1; i<n; i++) {
+        if (b[i-1] == 0) {
+            ans = ans + a[i];
+        } else if (b[i-1] == 1) {
+            ans = ans - a[i];
+        } else if (b[i-1] == 2) {
+            ans = ans * a[i];
+        } else {
+            ans = ans / a[i];
+        }
+    }
+    return ans;
+}
+int main() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i=0; i<n; i++) {
+        cin >> a[i];
+    }
+    vector<int> b;
+    for (int i=0; i<4; i++) {
+        int cnt;
+        cin >> cnt;
+        for (int k=0; k<cnt; k++) {
+            b.push_back(i);
+        }
+    }
+    sort(b.begin(),b.end());
+    vector<int> result;
+    do {
+        int temp = calc(a, b);
+        result.push_back(temp);
+    } while (next_permutation(b.begin(), b.end()));
+    auto ans = minmax_element(result.begin(), result.end());
+    cout << *ans.second << '\n';
+    cout << *ans.first << '\n';
+    return 0;
+}
+
