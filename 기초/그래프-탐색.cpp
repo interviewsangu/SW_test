@@ -167,3 +167,60 @@ int main() {
 	}
 	return 0;
 }
+
+- dfs 구현
+
+#include <cstdio>
+#include <vector>
+#include <queue>
+#include <cstring>
+using namespace std;
+vector<int> a[20001];
+int check[20001];
+void dfs(int node, int color) {
+	check[node] = color;
+    for(int i = 0; i<a[node].size(); i++){
+        int next = a[node][i];
+        if(!check[next]){
+            dfs(next, 3 - color);
+        }
+    }
+}
+int main() {
+	int t;
+	scanf("%d", &t);
+	while (t--) {
+		int n, m;
+		scanf("%d %d", &n, &m);
+		for (int i = 1; i <= n; i++) {
+			a[i].clear();
+			check[i] = 0;
+		}
+		for (int i = 0; i < m; i++) {
+			int u, v;
+			scanf("%d %d", &u, &v);
+			a[u].push_back(v);
+			a[v].push_back(u);
+		}
+		for (int i = 1; i <= n; i++) {
+			if (check[i] == 0) {
+				dfs(i, 1);
+			}
+		}
+		bool ans = false;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 0; j < a[i].size(); j++) {
+				if (check[i] == check[a[i][j]]) {
+					ans = true;
+				}
+			}
+		}
+		if (ans) {
+			printf("NO\n");
+		}
+		else {
+			printf("YES\n");
+		}
+	}
+	return 0;
+}
