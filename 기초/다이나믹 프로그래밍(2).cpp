@@ -1,4 +1,4 @@
-푼 문제 : 11053, ** 14002, 11055, 11722, 11054, 1912, 13398
+푼 문제 : 11053, ** 14002, 11055, 11722, 11054, 1912, 13398, 1699, 2225
 
 11053번 : 가장 긴 증가하는 부분 수열
 
@@ -278,5 +278,74 @@ int main() {
         }
     }
     cout << ans << '\n';
+    return 0;
+}
+
+1699번 : 제곱수의 합
+
+#include <iostream>
+using namespace std;
+int d[100001];
+int main() {
+    int n;
+    cin >> n;
+    for (int i=1; i<=n; i++) {
+        d[i] = i;
+        for (int j=1; j*j <= i; j++) {
+            if (d[i] > d[i-j*j]+1) {
+                d[i] = d[i-j*j]+1;
+            }
+        }
+    }
+    cout << d[n] << '\n';
+    return 0;
+}
+
+2225번 : 합분해 ***
+- 마지막에 올 수 있는게 뭔가?
+- 배열을 그릴 수 있는가?
+	
+3중 포문 구현
+
+#include <iostream>
+using namespace std;
+long long d[201][201];
+long long mod = 1000000000;
+int main() {
+    int n, k;
+    cin >> n >> k;
+    d[0][0] = 1LL;
+    for (int i=1; i<=k; i++) {
+        for (int j=0; j<=n; j++) {
+            for (int l=0; l<=j; l++) {
+                d[i][j] += d[i-1][j-l];
+                d[i][j] %= mod;
+            }
+        }
+    }
+    cout << d[k][n] << '\n';
+    return 0;
+}
+
+규칙을 찾은 후 2중으로 구현
+
+#include <iostream>
+using namespace std;
+long long d[201][201];
+long long mod = 1000000000;
+int main() {
+    int n, k;
+    cin >> n >> k;
+    d[0][0] = 1LL;
+    for (int i=1; i<=k; i++) {
+        for (int j=0; j<=n; j++) {
+            d[i][j] = d[i-1][j];
+            if (j-1 >= 0) {
+                d[i][j] += d[i][j-1];
+            }
+            d[i][j] %= mod;
+        }
+    }
+    cout << d[k][n] << '\n';
     return 0;
 }
